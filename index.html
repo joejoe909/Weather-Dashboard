@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="./css/style.css">
+    <title>Weather Dashboard</title>
+</head>
+
+<body>
+    <!-- <header>       
+        <div class="container" >
+            <div class="text-center bg-dark">
+                    <h1 style="color:white">Weather Dashboard</h1>
+            </div>
+    </header> -->
+    <header class="bg-dark">
+        <div class="text-center">
+            <h2 class="display-3" style="color:white">
+                Weather Dashboard
+            </h2>
+        </div>
+
+    </header>
+    <main>
+        <div class="jumbotron jumbotron-fluid col-12">
+            <div class="row">
+                <div class="col-4-fluid">
+                    <div class="card ml-4">
+                        <div class="card-body">
+                            <form class="form-inline">
+                                <div class="form-group mb-2">
+                                    <input type="text" readonly class="form-control-plaintext" id="cityMsg"
+                                        value="Search for a City.">
+                                </div>
+                                <div class="form-group">
+                                    <label for="citySearch" class="sr-only"></label>
+                                    <input type="City Name" class="form-control fluid" id="cityInpt"
+                                        placeholder="City Name...">
+                                    <button type="search" class="btn btn-dark ml-1" id="searchBtn">Search</button> 
+                                </div>
+                            </form>
+                                <div class="card-body" id="cityConatiner">
+                                    <table class="table table-dark">
+                                        <thead>
+                                            <tr>
+                                                <th id="click-me">Los Angeles</th>
+                                            </tr>
+                                            <tr>
+                                                <th id="click-me">New York</th>
+                                            </tr>
+                                            <tr>
+                                                <th id="click-me">Chicago</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div> 
+                        </div>
+                    </div>
+                </div>
+                <div class="col-8">
+                    <div class="row">
+                        <div class="card">
+                            <div class="card-body">
+                                This is some text within a card body.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="card">
+                            <div class="card-body">
+                                This is some text within a card body.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!--BOOT STRAP AND JQUERY CODE.-->
+    <!-- jQuery JS -->
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+        crossorigin="anonymous"></script>
+    <!-- Code to the JavaScript File -->
+    <script src="./JS/wdb.js"></script>
+
+</body>
+</html>

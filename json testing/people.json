@@ -1,0 +1,16 @@
+{
+    "people": [
+        {
+            "age": "35",
+            "name": "Brad" 
+        },
+        {
+            "age": "40",
+            "name": "John"
+        },
+        {
+            "age": "25",
+            "name": "Sara"
+        }
+    ]
+}
