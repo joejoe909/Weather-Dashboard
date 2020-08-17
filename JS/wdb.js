@@ -4,15 +4,9 @@ $(document).ready(function () {
         let time = moment().format('LLL');
         let test = false;
 
-        $(".cityBtn").on("click", function () {
-                alert("A city button was clicked");
-                var city = $(this).attr('id');
-                
-                //buildQueryURL(city);
-        });
-
         function renderCurrentWeather(ajxResponse)
         {       $("#currentWeather").html("");
+                console.log(ajxResponse);
                 let city = ajxResponse.city.name;
                 let currentWeather = ajxResponse.list[0];
                 let crTemp = (currentWeather.main.temp-273.15) * 1.8 +32;   //get temp humidity windspeed and uv index
@@ -46,11 +40,11 @@ $(document).ready(function () {
                         let tblRow = $('<tr>');
                         let thCity = $('<th>' + ctyName + '</th>');
                         thCity.addClass('cityBtn');
-                        thCity.attr('id', ctyName);
+                        thCity.attr('id', 'cBtn');
+                        thCity.attr('city', ctyName);
                         tblRow.append(thCity);
                         $('#cityList').append(tblRow);
-                        cityList.push(ctyName);
-                     
+                        cityList.push(ctyName);    
                 }
         }
 
@@ -83,12 +77,12 @@ $(document).ready(function () {
                   buildQueryURL(cityStr.val());
                 
         });
-
-     
-
-
         
-      
+        $("#cityList").on("click", "tr", function () { //event delegation!
+                var city = $(this).attr('id');
+                console.log($(this).text());
+               
+        });
 
 });
 
