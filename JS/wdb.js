@@ -81,6 +81,8 @@ $(document).ready(function () {
         $("#cityList").on("click", "tr", function () { //event delegation!
                 var city = $(this).attr('id');
                 console.log($(this).text());
+                cityString = $(this).text();
+                buildQueryURL(cityString);
                
         });
 
