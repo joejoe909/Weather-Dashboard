@@ -1,24 +1,68 @@
 $(document).ready(function () {
-        // var citylist = $.getJSON('./people.json');
-        //var queryURL = "";
-        var tucson = JSON.parse(localStorage.getItem("Tucson"));
-        console.log(tucson);
-        console.log(tucson.name);
-        console.log(tucson.list[0]);
-        console.log(tucson.list[1]);
-        console.log(tucson.list[2]);
-        console.log(tucson.list[3]);
-        console.log(tucson.list[4]);
+        let tucson = JSON.parse(localStorage.getItem("Tucson")); //used for testing
+        let cityList= [];  //we will have to setup local storage for this.
+        let time = moment().format('LLL');
+        let test = true;
+
+        $(".cityBtn").on("click", function () {
+                alert("A city button was clicked");
+                var city = $(this).attr('id');
+                
+                //buildQueryURL(city);
+        });
+
+        function renderCurrentWeather(ajxResponse)
+        {       $("#currentWeather").html("");
+                let city = ajxResponse.city.name;
+                let currentWeather = ajxResponse.list[0];
+                let crTemp = (currentWeather.main.temp-273.15) * 1.8 +32;   //get temp humidity windspeed and uv index
+                let crHmdty = currentWeather.main.humidity;
+                let crWndSpd = currentWeather.wind.speed;
+                let cityName = $('<h3>' + city + ' ' + time + '</h3>'); 
+                let Temp = $('<h4>' + 'Temperature: ' + parseInt(crTemp) + 'F°' + '</h4>'); 
+                let Hmdty = $('<h4>' + 'Humidity: ' + crHmdty + '%' + '</h4>'); 
+                let WndSpd = $('<h4>' + 'Wind Speed: ' + crWndSpd + ' MPH' + '</h4>'); 
+
+                $('#currentWeather').append(cityName);
+                $('#currentWeather').append(Temp);
+                $('#currentWeather').append(Hmdty);
+                $('#currentWeather').append(WndSpd);
+                addToCityList(city);
+                 //getuv
+                 //set 5 day forcast
+                let day1 = ajxResponse.list[1];
+                let day2 = ajxResponse.list[2];
+                let day3 = ajxResponse.list[3];
+                let day4 = ajxResponse.list[4];
+                let day5 = ajxResponse.list[5];
+        }
+
+        function addToCityList(ctyName){
+                let found = false;
+                for(i = 0; i < cityList.length;i++) //search for city presence in list
+                {   if(cityList[i]===ctyName) found = true;    }
+                if(!found) //if it's not found we add it.
+                {
+                        let tblRow = $('<tr>');
+                        let thCity = $('<th>' + ctyName + '</th>');
+                        thCity.addClass('cityBtn');
+                        thCity.attr('id', ctyName);
+                        tblRow.append(thCity);
+                        $('#cityList').append(tblRow);
+                        cityList.push(ctyName);
+                     
+                }
+        }
 
         function buildQueryURL(cityString){
-                console.log(typeof(cityString));
                 let apiCall = "https://api.openweathermap.org/data/2.5/forecast";
                 let cityName =  "?q="+cityString; 
                 let key = "&appid=beec6cc5881d930f74eb86a67a7a1dae";
-                console.log(cityString);
                 var queryURL= apiCall+cityName+key;
-
-                // query the city.list.json file to get a city by id.
+            
+                if(test){
+                    renderCurrentWeather(tucson);
+                }else{
                 $.ajax({
                         url: queryURL,
                         method: "GET"
@@ -27,8 +71,9 @@ $(document).ready(function () {
                         console.log("5 day forecase?")
                         console.log(resCity);
                         localStorage.setItem("Tucson", JSON.stringify(resCity));
-
+                        renderCurrentWeather(response);
                 });
+                }
         }
 
         $("#searchBtn").on("click", function () {
@@ -36,12 +81,15 @@ $(document).ready(function () {
                   console.log('click');
                   let cityStr = $("#cityInpt")
                   buildQueryURL(cityStr.val());
-                 //run your prepend to side bar function
+                
         });
+
+     
+
+
         
       
 
 });
-// localStorage.setItem("ScoreBoard", JSON.stringify(scoreArray));
-// localStorage.setItem("ScoreBoard", JSON.stringify(scoreArray));
+
 

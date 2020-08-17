@@ -38,40 +38,32 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="citySearch" class="sr-only"></label>
-                                    <input type="City Name" class="form-control fluid" id="cityInpt"
+                                    <input type="City Name" class="form-control" id="cityInpt"
                                         placeholder="City Name...">
                                     <button type="search" class="btn btn-dark ml-1" id="searchBtn">Search</button> 
                                 </div>
                             </form>
                                 <div class="card-body" id="cityConatiner">
-                                    <table class="table table-dark">
+                                    <table class="table table-dark" id="cityList">
                                         <thead>
-                                            <tr>
-                                                <th id="click-me">Los Angeles</th>
-                                            </tr>
-                                            <tr>
-                                                <th id="click-me">New York</th>
-                                            </tr>
-                                            <tr>
-                                                <th id="click-me">Chicago</th>
-                                            </tr>
+                                       
                                         </thead>
                                     </table>
                                 </div> 
-                        </div>
+                            </div>
+                         </div>
                     </div>
-                </div>
                 <div class="col-8">
                     <div class="row">
                         <div class="card">
-                            <div class="card-body">
-                                This is some text within a card body.
+                            <div class="card-body" id = "currentWeather">
+                              
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="card">
-                            <div class="card-body">
+                            <div class="card-body" id= "5-Day">
                                 This is some text within a card body.
                             </div>
                         </div>
@@ -90,6 +82,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
         integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
         crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
     <!-- Code to the JavaScript File -->
     <script src="./JS/wdb.js"></script>
 
