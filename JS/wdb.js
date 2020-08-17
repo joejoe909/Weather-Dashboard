@@ -2,7 +2,7 @@ $(document).ready(function () {
         let tucson = JSON.parse(localStorage.getItem("Tucson")); //used for testing
         let cityList= [];  //we will have to setup local storage for this.
         let time = moment().format('LLL');
-        let test = true;
+        let test = false;
 
         $(".cityBtn").on("click", function () {
                 alert("A city button was clicked");
