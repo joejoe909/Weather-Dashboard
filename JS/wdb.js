@@ -1,13 +1,4 @@
 $(document).ready(function () {
-        let lastCity = JSON.parse(localStorage.getItem("lastCity")); //used for testing
-        let cityList= [];  //we will have to setup local storage for this.
-        let time = moment().format('LLL');
-        let test = false; //to minimize unecessary querys this boolean item is utilized.
-        let forDate;
-        let forTemp;
-        let forHumidity;
-        let fiveDayObj = Object.create(FiveDayObject);
-
 
         function buildFiveDayForecast(jsnArray){
              $('#Day1').html("");
@@ -54,6 +45,7 @@ $(document).ready(function () {
         {       $("#currentWeather").html("");
                 console.log(ajxResponse);                       
                 let city = ajxResponse.city.name;
+                console.log("rcw is type of: " + typeof(city));
                 let currentWeather = ajxResponse.list[0];
                 let crTemp = (currentWeather.main.temp-273.15) * 1.8 +32;   //get temp humidity windspeed and uv index
                 let crHmdty = currentWeather.main.humidity;
@@ -79,8 +71,9 @@ $(document).ready(function () {
         }
 
         function addToCityList(ctyName){
+                console.log("ctyName is type of: " + typeof(ctyName));
                 let found = false;
-                for(i = 0; i < cityList.length;i++) //search for city presence in list
+                for(i = 0; i < cityList.length; i++) //search for city presence in list
                 {   if(cityList[i]===ctyName) found = true;    }
                 if(!found) //if it's not found we add it.
                 {
@@ -92,6 +85,7 @@ $(document).ready(function () {
                         tblRow.append(thCity);
                         $('#cityList').prepend(tblRow);
                         cityList.push(ctyName);    
+                        localStorage.setItem("cityList", JSON.stringify(cityList));
                 }
         }
 
@@ -117,6 +111,16 @@ $(document).ready(function () {
                 }
         }
 
+        function prefillCityList(){
+                addToCityList("Chicago");
+                addToCityList("New York");
+                addToCityList("Los Angeles");
+                addToCityList("San Francisco");
+                addToCityList("San Jose");
+                addToCityList("Phoenix");
+                addToCityList("Tucson");
+        }
+
         $("#searchBtn").on("click", function () {
                   event.preventDefault();
                   console.log('click');
@@ -132,13 +136,37 @@ $(document).ready(function () {
                 buildQueryURL(cityString);
                
         });
-
-
-
-
+       
+        //
+        //
+        let lastCity = JSON.parse(localStorage.getItem("lastCity")); //used for testing
+        let time = moment().format('LLL');
+        let test = false; //to minimize unecessary querys this boolean item is utilized.
+        let forDate;
+        let forTemp;
+        let forHumidity;
+        let fiveDayObj = Object.create(FiveDayObject);
+        let cityList = [];
+        let cityStore = JSON.parse(localStorage.getItem("cityList"));
+        let city = '';
+        if (cityStore !== null) {
+            cityList = cityStore;
+            lastCity = "";  
+            for(n = 0; n < cityList.length; n++)
+           {
+                city = cityList.shift(n);
+                console.log("city is type of:" + typeof(city));
+                if(city !== -1){ addToCityList(city) };
+                lastCity = city;
+           }
+            buildQueryURL(lastCity);
+        } else {
+                cityList = [];
+                prefillCityList();
+        }
 });
 
-
+//create object for 5 day list
 let FiveDayObject = {
         'date':[],
         'temp':[],
