@@ -2,7 +2,7 @@ $(document).ready(function () {
         let lastCity = JSON.parse(localStorage.getItem("lastCity")); //used for testing
         let cityList= [];  //we will have to setup local storage for this.
         let time = moment().format('LLL');
-        let test = true; //to minimize unecessary querys this boolean item is utilized.
+        let test = false; //to minimize unecessary querys this boolean item is utilized.
         let forDate;
         let forTemp;
         let forHumidity;
@@ -19,31 +19,35 @@ $(document).ready(function () {
                 {         
                     let dt = jsnArray[i].dt_txt;
                     let tm = jsnArray[i].main.temp;
+                    let tm2;
                     let hm = jsnArray[i].main.humidity;
                     if(dt.substring(11) === '15:00:00')
                     {   //add date
                          forDate = dt.substring(0,10);
                          fiveDayObj.date.push(forDate);
                          //add temperature
-                         forTemp = tm;
+                         tm2 = (tm - 273.15) * 1.8 + 32;   //get temp humidity windspeed and uv index
+                         forTemp = parseInt(tm2);
                          fiveDayObj.temp.push(forTemp); 
                          //add humidity
                         forHumidity = hm;
                         fiveDayObj.hum.push(forHumidity);
                     }     
                 }
-                console.log(fiveDayObj);
+                 console.log(fiveDayObj);
+                 var d;
                  for(n=0; n < fiveDayObj.date.length; n++)
                  {
-                    var d=n+1;    
+                    d=n+1;    
                     var h3Date = $('<h6>' + fiveDayObj.date[n] + '<h6>');
                     $('#Day'+d).append(h3Date); 
-                    var h3Temp = $('<h6>' + FiveDayObject.temp[n] + '<h6>');
+                    var h3Temp = $('<h6>' + FiveDayObject.temp[n] + 'F°' + '<h6>');
                     $('#Day'+d).append(h3Temp);   
-                    var h3Humidity = $('<h6>' + FiveDayObject.hum[n]+ '<h6>');
+                    var h3Humidity = $('<h6>' + FiveDayObject.hum[n] + '%'+ '<h6>');
                     $('#Day'+d).append(h3Humidity);    
                     console.log(d);
                  }
+                 fiveDayObj.clear();
         }
 
         function renderCurrentWeather(ajxResponse)
@@ -86,7 +90,7 @@ $(document).ready(function () {
                         thCity.attr('id', 'cBtn');
                         thCity.attr('city', ctyName);
                         tblRow.append(thCity);
-                        $('#cityList').append(tblRow);
+                        $('#cityList').prepend(tblRow);
                         cityList.push(ctyName);    
                 }
         }
@@ -138,6 +142,11 @@ $(document).ready(function () {
 let FiveDayObject = {
         'date':[],
         'temp':[],
-        'hum':[]
+        'hum':[],
+        clear:function(){
+                this.date.splice(0, this.date.length);
+                this.temp.splice(0, this.temp.length);
+                this.hum.splice(0, this.hum.length);
+        }
 }
 
