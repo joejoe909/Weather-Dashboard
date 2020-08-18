@@ -1,12 +1,38 @@
 $(document).ready(function () {
-        let tucson = JSON.parse(localStorage.getItem("Tucson")); //used for testing
+        let lastCity = JSON.parse(localStorage.getItem("lastCity")); //used for testing
         let cityList= [];  //we will have to setup local storage for this.
         let time = moment().format('LLL');
-        let test = false;
+        let test = true; //to minimize unecessary querys this boolean item is utilized.
+        let forDate;
+        let forTemp;
+        let forHumidity;
+        let fiveDayObj = Object.create(FiveDayObject);
+
+
+        function buildFiveDayForecast(jsnArray){
+                for(i = 0; i < jsnArray.length; i++)
+                {      
+                    let dt = jsnArray[i].dt_txt;
+                    let tm = jsnArray[i].main.temp;
+                    let hm = jsnArray[i].main.humidity;
+                    if(dt.substring(11) === '15:00:00')
+                    {   //add date
+                         forDate = dt.substring(0,10);
+                         fiveDayObj.date.push(forDate);
+                         //add temperature
+                         forTemp = tm;
+                         fiveDayObj.temp.push(forTemp); 
+                         //add humidity
+                        forHumidity = hm;
+                        fiveDayObj.hum.push(forHumidity);
+                    } 
+                }
+                console.log(fiveDayObj);
+        }
 
         function renderCurrentWeather(ajxResponse)
         {       $("#currentWeather").html("");
-                console.log(ajxResponse);
+                console.log(ajxResponse);                       
                 let city = ajxResponse.city.name;
                 let currentWeather = ajxResponse.list[0];
                 let crTemp = (currentWeather.main.temp-273.15) * 1.8 +32;   //get temp humidity windspeed and uv index
@@ -16,6 +42,8 @@ $(document).ready(function () {
                 let Temp = $('<h4>' + 'Temperature: ' + parseInt(crTemp) + 'F°' + '</h4>'); 
                 let Hmdty = $('<h4>' + 'Humidity: ' + crHmdty + '%' + '</h4>'); 
                 let WndSpd = $('<h4>' + 'Wind Speed: ' + crWndSpd + ' MPH' + '</h4>'); 
+                buildFiveDayForecast(ajxResponse.list);
+
 
                 $('#currentWeather').append(cityName);
                 $('#currentWeather').append(Temp);
@@ -48,14 +76,14 @@ $(document).ready(function () {
                 }
         }
 
-        function buildQueryURL(cityString){
+        function buildQueryURL(cityString){  //Here we build the queryURL and then send to renderCurrentWeather.
                 let apiCall = "https://api.openweathermap.org/data/2.5/forecast";
                 let cityName =  "?q="+cityString; 
                 let key = "&appid=beec6cc5881d930f74eb86a67a7a1dae";
                 var queryURL= apiCall+cityName+key;
             
                 if(test){
-                    renderCurrentWeather(tucson);
+                    renderCurrentWeather(lastCity);
                 }else{
                 $.ajax({
                         url: queryURL,
@@ -64,7 +92,7 @@ $(document).ready(function () {
                         let resCity = response;
                         console.log("5 day forecase?")
                         console.log(resCity);
-                        localStorage.setItem("Tucson", JSON.stringify(resCity));
+                        localStorage.setItem("lastCity", JSON.stringify(resCity));
                         renderCurrentWeather(response);
                 });
                 }
@@ -86,6 +114,15 @@ $(document).ready(function () {
                
         });
 
+
+
+
 });
 
+
+let FiveDayObject = {
+        'date':[],
+        'temp':[],
+        'hum':[]
+}
 
