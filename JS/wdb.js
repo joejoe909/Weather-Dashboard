@@ -10,8 +10,13 @@ $(document).ready(function () {
 
 
         function buildFiveDayForecast(jsnArray){
-                for(i = 0; i < jsnArray.length; i++)
-                {      
+             $('#Day1').html("");
+             $('#Day2').html("");   
+             $('#Day3').html("");
+             $('#Day4').html("");
+             $('#Day5').html("");
+             for(i = 0; i < jsnArray.length; i++)
+                {         
                     let dt = jsnArray[i].dt_txt;
                     let tm = jsnArray[i].main.temp;
                     let hm = jsnArray[i].main.humidity;
@@ -25,9 +30,20 @@ $(document).ready(function () {
                          //add humidity
                         forHumidity = hm;
                         fiveDayObj.hum.push(forHumidity);
-                    } 
+                    }     
                 }
                 console.log(fiveDayObj);
+                 for(n=0; n < fiveDayObj.date.length; n++)
+                 {
+                    var d=n+1;    
+                    var h3Date = $('<h6>' + fiveDayObj.date[n] + '<h6>');
+                    $('#Day'+d).append(h3Date); 
+                    var h3Temp = $('<h6>' + FiveDayObject.temp[n] + '<h6>');
+                    $('#Day'+d).append(h3Temp);   
+                    var h3Humidity = $('<h6>' + FiveDayObject.hum[n]+ '<h6>');
+                    $('#Day'+d).append(h3Humidity);    
+                    console.log(d);
+                 }
         }
 
         function renderCurrentWeather(ajxResponse)
@@ -43,7 +59,6 @@ $(document).ready(function () {
                 let Hmdty = $('<h4>' + 'Humidity: ' + crHmdty + '%' + '</h4>'); 
                 let WndSpd = $('<h4>' + 'Wind Speed: ' + crWndSpd + ' MPH' + '</h4>'); 
                 buildFiveDayForecast(ajxResponse.list);
-
 
                 $('#currentWeather').append(cityName);
                 $('#currentWeather').append(Temp);
