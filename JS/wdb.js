@@ -25,7 +25,6 @@ $(document).ready(function () {
                         fiveDayObj.hum.push(forHumidity);
                     }     
                 }
-                 console.log(fiveDayObj);
                  var d;
                  for(n=0; n < fiveDayObj.date.length; n++)
                  {
@@ -36,26 +35,36 @@ $(document).ready(function () {
                     $('#Day'+d).append(h3Temp);   
                     var h3Humidity = $('<h6>' + FiveDayObject.hum[n] + '%'+ '<h6>');
                     $('#Day'+d).append(h3Humidity);    
-                    console.log(d);
                  }
                  fiveDayObj.clear();
         }
+        
+        function renderUVindex(value) {
+                console.log("UVIndex");
+                console.log(value);
+                console.log(typeof(value));
+                let uv = $('<h4>' + value + '<h4>');
+                $('#currentWeather').append(uv)
+        }
 
         function renderCurrentWeather(ajxResponse)
-        {       $("#currentWeather").html("");
+        {       $("#currentWeather").html("");  //clear the card.
                 console.log(ajxResponse);                       
                 let city = ajxResponse.city.name;
-                console.log("rcw is type of: " + typeof(city));
-                let currentWeather = ajxResponse.list[0];
-                let crTemp = (currentWeather.main.temp-273.15) * 1.8 +32;   //get temp humidity windspeed and uv index
+                let currentWeather = ajxResponse.list[0];                 //get temp humidity windspeed and uv index
+                let crTemp = (currentWeather.main.temp-273.15) * 1.8 +32;   
                 let crHmdty = currentWeather.main.humidity;
                 let crWndSpd = currentWeather.wind.speed;
                 let cityName = $('<h3>' + city + ' ' + time + '</h3>'); 
                 let Temp = $('<h4>' + 'Temperature: ' + parseInt(crTemp) + 'F°' + '</h4>'); 
                 let Hmdty = $('<h4>' + 'Humidity: ' + crHmdty + '%' + '</h4>'); 
                 let WndSpd = $('<h4>' + 'Wind Speed: ' + crWndSpd + ' MPH' + '</h4>'); 
-                buildFiveDayForecast(ajxResponse.list);
-
+                let lat = ajxResponse.city.coord.lat;
+                let long = ajxResponse.city.coord.lon;
+                let uvIndxObj = '';
+                uvIndxObj = getUVindex(lat, long);  //Run a query for the UV index.
+                console.log(typeof(uvIndxObj));
+                console.log(uvIndxObj);
                 $('#currentWeather').append(cityName);
                 $('#currentWeather').append(Temp);
                 $('#currentWeather').append(Hmdty);
@@ -68,12 +77,14 @@ $(document).ready(function () {
                 let day3 = ajxResponse.list[3];
                 let day4 = ajxResponse.list[4];
                 let day5 = ajxResponse.list[5];
+                renderUVindex(uvIndxObj);
+                buildFiveDayForecast(ajxResponse.list);
+                
         }
 
         function addToCityList(ctyName){
-                console.log("ctyName is type of: " + typeof(ctyName));
                 let found = false;
-                for(i = 0; i < cityList.length; i++) //search for city presence in list
+                for(i = 0; i < cityList.length; i++) //search for city presence in list  //lookup includes to improve this....
                 {   if(cityList[i]===ctyName) found = true;    }
                 if(!found) //if it's not found we add it.
                 {
@@ -92,21 +103,41 @@ $(document).ready(function () {
         function buildQueryURL(cityString){  //Here we build the queryURL and then send to renderCurrentWeather.
                 let apiCall = "https://api.openweathermap.org/data/2.5/forecast";
                 let cityName =  "?q="+cityString; 
-                let key = "&appid=beec6cc5881d930f74eb86a67a7a1dae";
                 var queryURL= apiCall+cityName+key;
-            
                 if(test){
                     renderCurrentWeather(lastCity);
                 }else{
-                $.ajax({
-                        url: queryURL,
-                        method: "GET"
-                }).then(function(response){
-                        let resCity = response;
-                        console.log("5 day forecase?")
-                        console.log(resCity);
-                        localStorage.setItem("lastCity", JSON.stringify(resCity));
-                        renderCurrentWeather(response);
+                        $.ajax({
+                                url: queryURL,
+                                method: "GET"
+                        }).then(function(response){
+                                let resCity = response;
+                                localStorage.setItem("lastCity", JSON.stringify(resCity));
+                                renderCurrentWeather(response);
+                });
+                }
+        }
+
+        function getUVindex(lat, lon){   // We esentially do the same thing as above but for UV index.
+                let apiCall = "http://api.openweathermap.org/data/2.5/uvi?" //?appid={appid}&lat={lat}&lon={lon}
+                let la = "&lat=" +lat;
+                let lo = "&lon=" +lon;
+                let KK = 'appid=beec6cc5881d930f74eb86a67a7a1dae';
+                var queryURL = apiCall +KK+la+lo;
+                if(test){
+                        renderUVIndex(lastUV);
+                }else{
+                        $.ajax({
+                                url: queryURL,
+                                method: "GET"
+                        }).then(function (response) {
+                                console.log(response);
+                                localStorage.setItem("lastUV", JSON.stringify(response)); 
+                                console.log(response.value);
+                                let a = "UV:" + String(response.value);
+                                console.log(a);
+                                return a;
+                                
                 });
                 }
         }
@@ -137,9 +168,10 @@ $(document).ready(function () {
                
         });
        
-        //
-        //
+        //Variable initializations.
+        let key = "&appid=beec6cc5881d930f74eb86a67a7a1dae";
         let lastCity = JSON.parse(localStorage.getItem("lastCity")); //used for testing
+        let lastUV = JSON.parse(localStorage.getItem("lastUV"));//" " " 
         let time = moment().format('LLL');
         let test = false; //to minimize unecessary querys this boolean item is utilized.
         let forDate;
@@ -155,7 +187,6 @@ $(document).ready(function () {
             for(n = 0; n < cityList.length; n++)
            {
                 city = cityList.shift(n);
-                console.log("city is type of:" + typeof(city));
                 if(city !== -1){ addToCityList(city) };
                 lastCity = city;
            }
@@ -163,6 +194,7 @@ $(document).ready(function () {
         } else {
                 cityList = [];
                 prefillCityList();
+                buildQueryURL(tucson);
         }
 });
 
