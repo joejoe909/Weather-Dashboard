@@ -8,7 +8,12 @@ $(document).ready(function () {
                 let crTemp = (currentWeather.main.temp-273.15) * 1.8 +32;   
                 let crHmdty = currentWeather.main.humidity;
                 let crWndSpd = currentWeather.wind.speed;
-                let cityName = $('<h3>' + city + ' ' + time + '</h3>'); 
+                let icnCW = currentWeather.weather[0].icon;
+                console.log(icnCW);
+                let imgICW = $('<img src = http://openweathermap.org/img/wn/' + icnCW + '@2x.png' + '>');
+                console.log(imgICW);
+                let cityName = $('<h3>' + city + ' ' + time +  '</h3>');
+                cityName.append(imgICW); 
                 let Temp = $('<h4>' + 'Temperature: ' + parseInt(crTemp) + 'F°' + '</h4>'); 
                 let Hmdty = $('<h4>' + 'Humidity: ' + crHmdty + '%' + '</h4>'); 
                 let WndSpd = $('<h4>' + 'Wind Speed: ' + crWndSpd + ' MPH' + '</h4>'); 
@@ -50,6 +55,8 @@ $(document).ready(function () {
                         let tm = jsnArray[i].main.temp;
                         let tm2;
                         let hm = jsnArray[i].main.humidity;
+                        let icn = jsnArray[i].weather[0].icon;
+                        console.log(icn);
                         if (dt.substring(11) === '15:00:00') {   //add date
                                 forDate = dt.substring(0, 10);
                                 fiveDayObj.date.push(forDate);
@@ -60,6 +67,10 @@ $(document).ready(function () {
                                 //add humidity
                                 forHumidity = hm;
                                 fiveDayObj.hum.push(forHumidity);
+                                //add icon
+                                forIcon = icn;
+                                fiveDayObj.icon.push(forIcon);
+
                         }
                 }
                 var d;
@@ -69,6 +80,8 @@ $(document).ready(function () {
                         $('#Day' + d).append(h3Date);
                         var h3Temp = $('<h6>' + FiveDayObject.temp[n] + 'F°' + '<h6>');
                         $('#Day' + d).append(h3Temp);
+                        var icon = $('<img src = http://openweathermap.org/img/wn/' + fiveDayObj.icon[n] + '@2x.png' + '>');
+                        $('#Day' + d).append(icon);
                         var h3Humidity = $('<h6>' + FiveDayObject.hum[n] + '%' + '<h6>');
                         $('#Day' + d).append(h3Humidity);
                 }
@@ -183,6 +196,7 @@ $(document).ready(function () {
         let forDate;
         let forTemp;
         let forHumidity;
+        let forIcon;
         let fiveDayObj = Object.create(FiveDayObject);
         let uvI = Object.create(uvIndexObject);
         let cityList = [];
@@ -213,10 +227,12 @@ let FiveDayObject = {
         'date':[],
         'temp':[],
         'hum':[],
+        'icon':[],
         clear:function(){
                 this.date.splice(0, this.date.length);
                 this.temp.splice(0, this.temp.length);
                 this.hum.splice(0, this.hum.length);
+                this.icon.splice(0, this.icon.length);
         }
 };
 
@@ -230,5 +246,6 @@ let renderModule = {
         'currentTemp':'',
         'currentHumidity':'',
         'currentWindSpeed':'',
+       
 
 }
