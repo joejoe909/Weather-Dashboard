@@ -1,64 +1,5 @@
 $(document).ready(function () {
 
-        function buildQueryURL(cityString) {  //Here we build the queryURL and then send to renderCurrentWeather.
-                let apiCall = "https://api.openweathermap.org/data/2.5/forecast";
-                let cityName = "?q=" + cityString;
-                var queryURL = apiCall + cityName + key;
-                if (test) {
-                        renderCurrentWeather(lastCity);
-                } else {
-                        $.ajax({
-                                url: queryURL,
-                                method: "GET"
-                        }).then(function (response) {
-                                let resCity = response;
-                                localStorage.setItem("lastCity", JSON.stringify(resCity)); // this is used so we can test without having to query the server
-                                renderCurrentWeather(response);
-                        });
-                }
-        }
-
-        function getUVindex(lat, lon) {   // We esentially do the same thing as above but for UV index.
-                let UVdata = [];
-                let apiCall = "http://api.openweathermap.org/data/2.5/uvi?" //?appid={appid}&lat={lat}&lon={lon}
-                let la = "&lat=" + lat;
-                let lo = "&lon=" + lon;
-                let KK = 'appid=beec6cc5881d930f74eb86a67a7a1dae';
-                var queryURL = apiCall + KK + la + lo;
-                if (test) {
-                        renderUVIndex(lastUV);
-                } else {
-                        $.ajax({
-                                url: queryURL,
-                                method: "GET"
-                        }).then(function (response) {
-                                console.log(response);
-                                let UVdata = JSON.stringify(response.value);
-                                localStorage.setItem("lastUV", JSON.stringify(UVdata)); // this is used so we can test without having to query the server
-                                uvIndexObject.uv = UVdata;
-                        });
-                }
-        }
-
-        function addToCityList(ctyName) {
-                let found = false;
-                for (i = 0; i < cityList.length; i++) //search for city presence in list  //lookup includes to improve this....
-                { if (cityList[i] === ctyName) found = true; }
-                if (!found) //if it's not found we add it.
-                {
-                        let tblRow = $('<tr>');
-                        let thCity = $('<th>' + ctyName + '</th>');
-                        thCity.addClass('cityBtn');
-                        thCity.attr('id', 'cBtn');
-                        thCity.attr('city', ctyName);
-                        tblRow.append(thCity);
-                        $('#cityList').prepend(tblRow);
-                        cityList.push(ctyName);
-                        localStorage.setItem("cityList", JSON.stringify(cityList));
-                }
-        }
-
-
         function renderCurrentWeather(ajxResponse)
         {       $("#currentWeather").html("");  //clear the card.
                 console.log(ajxResponse);                       
@@ -73,14 +14,13 @@ $(document).ready(function () {
                 let WndSpd = $('<h4>' + 'Wind Speed: ' + crWndSpd + ' MPH' + '</h4>'); 
                 let lat = ajxResponse.city.coord.lat;
                 let long = ajxResponse.city.coord.lon;
-                getUVindex(lat, long);  //Run a query for the UV index. //put uv index in uvTest variable
+                getUVindex(lat, long);  //Run a query for the UV index. //put uv index in uv variable
                 //toString(uvIndxObj);
-                console.log(uvTest);
-                console.log(typeof(uvTest));
-                 let uv = $('<h4>' + 'UV index: '  + uvIndexObject.uv + ' ' + '<h4>');
-                 uv.setBgColor;
-                 console.log(uv);
-                 uv.attr('class' , 'bg-danger text-light');
+                console.log(uvI);
+                console.log(typeof(uvI));
+                let uv = $('<h4>' + 'UV index: '  + uvI.uv + ' ' + '<h4>');
+                console.log(uv);
+                uv.attr('class' , 'bg-danger text-light');
                 // console.log(uvTest);
                 $('#currentWeather').append(cityName);
                 $('#currentWeather').append(Temp);
@@ -95,8 +35,7 @@ $(document).ready(function () {
                 let day3 = ajxResponse.list[3];
                 let day4 = ajxResponse.list[4];
                 let day5 = ajxResponse.list[5];
-                buildFiveDayForecast(ajxResponse.list);
-                
+                buildFiveDayForecast(ajxResponse.list);     
         }
 
         function buildFiveDayForecast(jsnArray) {
@@ -147,6 +86,69 @@ $(document).ready(function () {
                 addToCityList("Green Valley");
                 addToCityList("Rio Rico");
                 addToCityList("Tucson");
+                addToCityList("Nogales");
+        }
+
+
+        function buildQueryURL(cityString) {  //Here we build the queryURL and then send to renderCurrentWeather.
+                let apiCall = "https://api.openweathermap.org/data/2.5/forecast";
+                let cityName = "?q=" + cityString;
+                var queryURL = apiCall + cityName + key;
+                if (test) {
+                        renderCurrentWeather(lastCity);
+                } else {
+                        $.ajax({
+                                url: queryURL,
+                                method: "GET"
+                        }).then(function (response) {
+                                let resCity = response;
+                                localStorage.setItem("lastCity", JSON.stringify(resCity)); // this is used so we can test without having to query the server
+                                renderCurrentWeather(response);
+                        });
+                }
+        }
+
+        function getUVindex(lat, lon) {   // We esentially do the same thing as above but for UV index.
+                let UVdata = [];
+                let apiCall = "http://api.openweathermap.org/data/2.5/uvi?" //?appid={appid}&lat={lat}&lon={lon}
+                let la = "&lat=" + lat;
+                let lo = "&lon=" + lon;
+                let KK = 'appid=beec6cc5881d930f74eb86a67a7a1dae';
+                var queryURL = apiCall + KK + la + lo;
+                if (test) {
+                        renderUVIndex(lastUV);
+                } else {
+                        $.ajax({
+                                url: queryURL,
+                                method: "GET"
+                        }).then(function (response) {
+                                console.log(response);
+                                let UVdata = JSON.stringify(response.value);
+                                localStorage.setItem("lastUV", JSON.stringify(UVdata)); // this is used so we can test without having to query the server
+                                uvI = Object.create(uvIndexObject);
+                                uvI.uv = UVdata;
+                                AtestFun(UVdata);
+                                AtestFun(uvI.uv);   
+                        });
+                }
+        }
+
+        function addToCityList(ctyName) {
+                let found = false;
+                for (i = 0; i < cityList.length; i++) //search for city presence in list  //lookup includes to improve this....
+                { if (cityList[i] === ctyName) found = true; }
+                if (!found) //if it's not found we add it.
+                {
+                        let tblRow = $('<tr>');
+                        let thCity = $('<th>' + ctyName + '</th>');
+                        thCity.addClass('cityBtn');
+                        thCity.attr('id', 'cBtn');
+                        thCity.attr('city', ctyName);
+                        tblRow.append(thCity);
+                        $('#cityList').prepend(tblRow);
+                        cityList.push(ctyName);
+                        localStorage.setItem("cityList", JSON.stringify(cityList));
+                }
         }
 
         function AtestFun(string)
@@ -182,27 +184,28 @@ $(document).ready(function () {
         let forTemp;
         let forHumidity;
         let fiveDayObj = Object.create(FiveDayObject);
+        let uvI = Object.create(uvIndexObject);
         let cityList = [];
         let cityStore = JSON.parse(localStorage.getItem("cityList"));
-        let city = '';
-        let uvTest = Object.create(uvIndexObject);
-        if (cityStore !== null) {
-            cityList = cityStore;
-            lastCity = "";  
-            for(n = 0; n < cityList.length; n++)
-           {
-                city = cityList.shift(n);
-                if(city !== -1){ addToCityList(city) };
-                lastCity = city;
-           }
-            buildQueryURL(cityList[0]);
-           
-        } else {
-                cityList = [];
-                prefillCityList();
-                buildQueryURL(tucson);
-                
-        }
+        let cityNm = '';
+        if(!test)
+        {
+                if (cityStore !== null) {
+                cityList = cityStore;
+                lastCity = "";  
+                        for(n = 0; n < cityList.length; n++)
+                        {
+                                city = cityList.shift(n);
+                                if(city !== -1){ addToCityList(city) };
+                                lastCity = city;
+                        }
+                        buildQueryURL(cityList[0]);
+                } else {
+                        cityList = [];
+                        prefillCityList();
+                        buildQueryURL(tucson);
+                }
+        }        
 });
 
 //create object for 5 day list
@@ -221,3 +224,11 @@ let uvIndexObject = {
             'uv':'',
 };
 
+let renderModule = {
+        'city':'',
+        'currentWeather':'',
+        'currentTemp':'',
+        'currentHumidity':'',
+        'currentWindSpeed':'',
+
+}
