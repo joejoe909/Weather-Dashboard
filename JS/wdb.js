@@ -39,14 +39,6 @@ $(document).ready(function () {
                  fiveDayObj.clear();
         }
         
-        function renderUVindex(value) {
-                console.log("UVIndex");
-                console.log(value);
-                console.log(typeof(value));
-                let uv = $('<h4>' + value + '<h4>');
-                $('#currentWeather').append(uv)
-        }
-
         function renderCurrentWeather(ajxResponse)
         {       $("#currentWeather").html("");  //clear the card.
                 console.log(ajxResponse);                       
@@ -61,14 +53,15 @@ $(document).ready(function () {
                 let WndSpd = $('<h4>' + 'Wind Speed: ' + crWndSpd + ' MPH' + '</h4>'); 
                 let lat = ajxResponse.city.coord.lat;
                 let long = ajxResponse.city.coord.lon;
-                let uvIndxObj = '';
-                uvIndxObj = getUVindex(lat, long);  //Run a query for the UV index.
-                console.log(typeof(uvIndxObj));
-                console.log(uvIndxObj);
+                let uvIndxObj = getUVindex(lat, long);  //Run a query for the UV index.
+                toString(uvIndxObj);
+                console.log(uvIndxObj.text);
+                let uv = $('<h4>' + uvIndxObj + ' ' + '<h4>');
                 $('#currentWeather').append(cityName);
                 $('#currentWeather').append(Temp);
                 $('#currentWeather').append(Hmdty);
                 $('#currentWeather').append(WndSpd);
+                // $('#currentWeather').append(uv)
                 addToCityList(city);
                  //getuv
                  //set 5 day forcast
@@ -77,7 +70,6 @@ $(document).ready(function () {
                 let day3 = ajxResponse.list[3];
                 let day4 = ajxResponse.list[4];
                 let day5 = ajxResponse.list[5];
-                renderUVindex(uvIndxObj);
                 buildFiveDayForecast(ajxResponse.list);
                 
         }
@@ -112,13 +104,14 @@ $(document).ready(function () {
                                 method: "GET"
                         }).then(function(response){
                                 let resCity = response;
-                                localStorage.setItem("lastCity", JSON.stringify(resCity));
+                                localStorage.setItem("lastCity", JSON.stringify(resCity)); // this is used so we can test without having to query the server
                                 renderCurrentWeather(response);
                 });
                 }
         }
 
         function getUVindex(lat, lon){   // We esentially do the same thing as above but for UV index.
+                let UVdata = [];
                 let apiCall = "http://api.openweathermap.org/data/2.5/uvi?" //?appid={appid}&lat={lat}&lon={lon}
                 let la = "&lat=" +lat;
                 let lo = "&lon=" +lon;
@@ -132,11 +125,11 @@ $(document).ready(function () {
                                 method: "GET"
                         }).then(function (response) {
                                 console.log(response);
-                                localStorage.setItem("lastUV", JSON.stringify(response)); 
-                                console.log(response.value);
-                                let a = "UV:" + String(response.value);
-                                console.log(a);
-                                return a;
+                                UVdata = Object.values(response)
+                                localStorage.setItem("lastUV", JSON.stringify(UVdata)); // this is used so we can test without having to query the server
+                                console.log(UVdata);
+                                let uv = UVdata[4];
+                                return uv;
                                 
                 });
                 }
@@ -149,6 +142,8 @@ $(document).ready(function () {
                 addToCityList("San Francisco");
                 addToCityList("San Jose");
                 addToCityList("Phoenix");
+                addToCityList("Gree Valley");
+                addToCityList("Rio Rico");
                 addToCityList("Tucson");
         }
 
