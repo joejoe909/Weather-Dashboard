@@ -1,44 +1,64 @@
 $(document).ready(function () {
 
-        function buildFiveDayForecast(jsnArray){
-             $('#Day1').html("");
-             $('#Day2').html("");   
-             $('#Day3').html("");
-             $('#Day4').html("");
-             $('#Day5').html("");
-             for(i = 0; i < jsnArray.length; i++)
-                {         
-                    let dt = jsnArray[i].dt_txt;
-                    let tm = jsnArray[i].main.temp;
-                    let tm2;
-                    let hm = jsnArray[i].main.humidity;
-                    if(dt.substring(11) === '15:00:00')
-                    {   //add date
-                         forDate = dt.substring(0,10);
-                         fiveDayObj.date.push(forDate);
-                         //add temperature
-                         tm2 = (tm - 273.15) * 1.8 + 32;   //get temp humidity windspeed and uv index
-                         forTemp = parseInt(tm2);
-                         fiveDayObj.temp.push(forTemp); 
-                         //add humidity
-                        forHumidity = hm;
-                        fiveDayObj.hum.push(forHumidity);
-                    }     
+        function buildQueryURL(cityString) {  //Here we build the queryURL and then send to renderCurrentWeather.
+                let apiCall = "https://api.openweathermap.org/data/2.5/forecast";
+                let cityName = "?q=" + cityString;
+                var queryURL = apiCall + cityName + key;
+                if (test) {
+                        renderCurrentWeather(lastCity);
+                } else {
+                        $.ajax({
+                                url: queryURL,
+                                method: "GET"
+                        }).then(function (response) {
+                                let resCity = response;
+                                localStorage.setItem("lastCity", JSON.stringify(resCity)); // this is used so we can test without having to query the server
+                                renderCurrentWeather(response);
+                        });
                 }
-                 var d;
-                 for(n=0; n < fiveDayObj.date.length; n++)
-                 {
-                    d=n+1;    
-                    var h3Date = $('<h6>' + fiveDayObj.date[n] + '<h6>');
-                    $('#Day'+d).append(h3Date); 
-                    var h3Temp = $('<h6>' + FiveDayObject.temp[n] + 'F°' + '<h6>');
-                    $('#Day'+d).append(h3Temp);   
-                    var h3Humidity = $('<h6>' + FiveDayObject.hum[n] + '%'+ '<h6>');
-                    $('#Day'+d).append(h3Humidity);    
-                 }
-                 fiveDayObj.clear();
         }
-        
+
+        function getUVindex(lat, lon) {   // We esentially do the same thing as above but for UV index.
+                let UVdata = [];
+                let apiCall = "http://api.openweathermap.org/data/2.5/uvi?" //?appid={appid}&lat={lat}&lon={lon}
+                let la = "&lat=" + lat;
+                let lo = "&lon=" + lon;
+                let KK = 'appid=beec6cc5881d930f74eb86a67a7a1dae';
+                var queryURL = apiCall + KK + la + lo;
+                if (test) {
+                        renderUVIndex(lastUV);
+                } else {
+                        $.ajax({
+                                url: queryURL,
+                                method: "GET"
+                        }).then(function (response) {
+                                console.log(response);
+                                let UVdata = JSON.stringify(response.value);
+                                localStorage.setItem("lastUV", JSON.stringify(UVdata)); // this is used so we can test without having to query the server
+                                uvIndexObject.uv = UVdata;
+                        });
+                }
+        }
+
+        function addToCityList(ctyName) {
+                let found = false;
+                for (i = 0; i < cityList.length; i++) //search for city presence in list  //lookup includes to improve this....
+                { if (cityList[i] === ctyName) found = true; }
+                if (!found) //if it's not found we add it.
+                {
+                        let tblRow = $('<tr>');
+                        let thCity = $('<th>' + ctyName + '</th>');
+                        thCity.addClass('cityBtn');
+                        thCity.attr('id', 'cBtn');
+                        thCity.attr('city', ctyName);
+                        tblRow.append(thCity);
+                        $('#cityList').prepend(tblRow);
+                        cityList.push(ctyName);
+                        localStorage.setItem("cityList", JSON.stringify(cityList));
+                }
+        }
+
+
         function renderCurrentWeather(ajxResponse)
         {       $("#currentWeather").html("");  //clear the card.
                 console.log(ajxResponse);                       
@@ -53,15 +73,20 @@ $(document).ready(function () {
                 let WndSpd = $('<h4>' + 'Wind Speed: ' + crWndSpd + ' MPH' + '</h4>'); 
                 let lat = ajxResponse.city.coord.lat;
                 let long = ajxResponse.city.coord.lon;
-                let uvIndxObj = getUVindex(lat, long);  //Run a query for the UV index.
-                toString(uvIndxObj);
-                console.log(uvIndxObj.text);
-                let uv = $('<h4>' + uvIndxObj + ' ' + '<h4>');
+                getUVindex(lat, long);  //Run a query for the UV index. //put uv index in uvTest variable
+                //toString(uvIndxObj);
+                console.log(uvTest);
+                console.log(typeof(uvTest));
+                 let uv = $('<h4>' + 'UV index: '  + uvIndexObject.uv + ' ' + '<h4>');
+                 uv.setBgColor;
+                 console.log(uv);
+                 uv.attr('class' , uv.bgText);
+                // console.log(uvTest);
                 $('#currentWeather').append(cityName);
                 $('#currentWeather').append(Temp);
                 $('#currentWeather').append(Hmdty);
                 $('#currentWeather').append(WndSpd);
-                // $('#currentWeather').append(uv)
+                $('#currentWeather').append(uv);
                 addToCityList(city);
                  //getuv
                  //set 5 day forcast
@@ -74,66 +99,43 @@ $(document).ready(function () {
                 
         }
 
-        function addToCityList(ctyName){
-                let found = false;
-                for(i = 0; i < cityList.length; i++) //search for city presence in list  //lookup includes to improve this....
-                {   if(cityList[i]===ctyName) found = true;    }
-                if(!found) //if it's not found we add it.
-                {
-                        let tblRow = $('<tr>');
-                        let thCity = $('<th>' + ctyName + '</th>');
-                        thCity.addClass('cityBtn');
-                        thCity.attr('id', 'cBtn');
-                        thCity.attr('city', ctyName);
-                        tblRow.append(thCity);
-                        $('#cityList').prepend(tblRow);
-                        cityList.push(ctyName);    
-                        localStorage.setItem("cityList", JSON.stringify(cityList));
+        function buildFiveDayForecast(jsnArray) {
+                $('#Day1').html("");
+                $('#Day2').html("");
+                $('#Day3').html("");
+                $('#Day4').html("");
+                $('#Day5').html("");
+
+                for (i = 0; i < jsnArray.length; i++) {
+                        let dt = jsnArray[i].dt_txt;
+                        let tm = jsnArray[i].main.temp;
+                        let tm2;
+                        let hm = jsnArray[i].main.humidity;
+                        if (dt.substring(11) === '15:00:00') {   //add date
+                                forDate = dt.substring(0, 10);
+                                fiveDayObj.date.push(forDate);
+                                //add temperature
+                                tm2 = (tm - 273.15) * 1.8 + 32;   //get temp humidity windspeed and uv index
+                                forTemp = parseInt(tm2);
+                                fiveDayObj.temp.push(forTemp);
+                                //add humidity
+                                forHumidity = hm;
+                                fiveDayObj.hum.push(forHumidity);
+                        }
                 }
+                var d;
+                for (n = 0; n < fiveDayObj.date.length; n++) {
+                        d = n + 1;
+                        var h3Date = $('<h6>' + fiveDayObj.date[n] + '<h6>');
+                        $('#Day' + d).append(h3Date);
+                        var h3Temp = $('<h6>' + FiveDayObject.temp[n] + 'F°' + '<h6>');
+                        $('#Day' + d).append(h3Temp);
+                        var h3Humidity = $('<h6>' + FiveDayObject.hum[n] + '%' + '<h6>');
+                        $('#Day' + d).append(h3Humidity);
+                }
+                fiveDayObj.clear();
         }
 
-        function buildQueryURL(cityString){  //Here we build the queryURL and then send to renderCurrentWeather.
-                let apiCall = "https://api.openweathermap.org/data/2.5/forecast";
-                let cityName =  "?q="+cityString; 
-                var queryURL= apiCall+cityName+key;
-                if(test){
-                    renderCurrentWeather(lastCity);
-                }else{
-                        $.ajax({
-                                url: queryURL,
-                                method: "GET"
-                        }).then(function(response){
-                                let resCity = response;
-                                localStorage.setItem("lastCity", JSON.stringify(resCity)); // this is used so we can test without having to query the server
-                                renderCurrentWeather(response);
-                });
-                }
-        }
-
-        function getUVindex(lat, lon){   // We esentially do the same thing as above but for UV index.
-                let UVdata = [];
-                let apiCall = "http://api.openweathermap.org/data/2.5/uvi?" //?appid={appid}&lat={lat}&lon={lon}
-                let la = "&lat=" +lat;
-                let lo = "&lon=" +lon;
-                let KK = 'appid=beec6cc5881d930f74eb86a67a7a1dae';
-                var queryURL = apiCall +KK+la+lo;
-                if(test){
-                        renderUVIndex(lastUV);
-                }else{
-                        $.ajax({
-                                url: queryURL,
-                                method: "GET"
-                        }).then(function (response) {
-                                console.log(response);
-                                UVdata = Object.values(response)
-                                localStorage.setItem("lastUV", JSON.stringify(UVdata)); // this is used so we can test without having to query the server
-                                console.log(UVdata);
-                                let uv = UVdata[4];
-                                return uv;
-                                
-                });
-                }
-        }
 
         function prefillCityList(){
                 addToCityList("Chicago");
@@ -142,9 +144,16 @@ $(document).ready(function () {
                 addToCityList("San Francisco");
                 addToCityList("San Jose");
                 addToCityList("Phoenix");
-                addToCityList("Gree Valley");
+                addToCityList("Green Valley");
                 addToCityList("Rio Rico");
                 addToCityList("Tucson");
+        }
+
+        function AtestFun(string)
+        {
+                let aString = string;
+                console.log(aString);
+                return aString;
         }
 
         $("#searchBtn").on("click", function () {
@@ -176,6 +185,7 @@ $(document).ready(function () {
         let cityList = [];
         let cityStore = JSON.parse(localStorage.getItem("cityList"));
         let city = '';
+        let uvTest = Object.create(uvIndexObject);
         if (cityStore !== null) {
             cityList = cityStore;
             lastCity = "";  
@@ -185,11 +195,13 @@ $(document).ready(function () {
                 if(city !== -1){ addToCityList(city) };
                 lastCity = city;
            }
-            buildQueryURL(lastCity);
+            buildQueryURL(cityList[0]);
+           
         } else {
                 cityList = [];
                 prefillCityList();
                 buildQueryURL(tucson);
+                
         }
 });
 
@@ -203,5 +215,24 @@ let FiveDayObject = {
                 this.temp.splice(0, this.temp.length);
                 this.hum.splice(0, this.hum.length);
         }
-}
+};
+
+let uvIndexObject = {
+            'uv':'',
+        'bgText':'bg-primary',
+    'setBgColor':function(uv){
+                if(this.uv > 10)
+                {
+                   this.bgText = 'bg-danger';
+                       
+                }else if(this.uv > 5 && this.uv < 10){
+                    this.bgText = 'bg-warning';
+                            
+                }else{
+                    this.bgText = 'bg-primary';
+                        
+                }
+
+        },
+};
 
