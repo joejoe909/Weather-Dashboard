@@ -2,16 +2,14 @@ $(document).ready(function () {
 
         function renderCurrentWeather(ajxResponse)
         {       $("#currentWeather").html("");  //clear the card.
-                console.log(ajxResponse);                       
+                // console.log(ajxResponse);                       
                 let city = ajxResponse.city.name;
                 let currentWeather = ajxResponse.list[0];                 //get temp humidity windspeed and uv index
                 let crTemp = (currentWeather.main.temp-273.15) * 1.8 +32;   
                 let crHmdty = currentWeather.main.humidity;
                 let crWndSpd = currentWeather.wind.speed;
                 let icnCW = currentWeather.weather[0].icon;
-                console.log(icnCW);
                 let imgICW = $('<img src = http://openweathermap.org/img/wn/' + icnCW + '@2x.png' + '>');
-                console.log(imgICW);
                 let cityName = $('<h3>' + city + ' ' + time +  '</h3>');
                 cityName.append(imgICW); 
                 let Temp = $('<h4>' + 'Temperature: ' + parseInt(crTemp) + 'F°' + '</h4>'); 
@@ -21,10 +19,7 @@ $(document).ready(function () {
                 let long = ajxResponse.city.coord.lon;
                 getUVindex(lat, long);  //Run a query for the UV index. //put uv index in uv variable
                 //toString(uvIndxObj);
-                console.log(uvI);
-                console.log(typeof(uvI));
                 let uv = $('<h4>' + 'UV index: '  + uvI.uv + ' ' + '<h4>');
-                console.log(uv);
                 uv.attr('class' , 'bg-danger text-light');
                 // console.log(uvTest);
                 $('#currentWeather').append(cityName);
@@ -56,7 +51,6 @@ $(document).ready(function () {
                         let tm2;
                         let hm = jsnArray[i].main.humidity;
                         let icn = jsnArray[i].weather[0].icon;
-                        console.log(icn);
                         if (dt.substring(11) === '15:00:00') {   //add date
                                 forDate = dt.substring(0, 10);
                                 fiveDayObj.date.push(forDate);
@@ -135,13 +129,13 @@ $(document).ready(function () {
                                 url: queryURL,
                                 method: "GET"
                         }).then(function (response) {
-                                console.log(response);
+                               // console.log(response);
                                 let UVdata = JSON.stringify(response.value);
                                 localStorage.setItem("lastUV", JSON.stringify(UVdata)); // this is used so we can test without having to query the server
                                 uvI = Object.create(uvIndexObject);
                                 uvI.uv = UVdata;
-                                AtestFun(UVdata);
-                                AtestFun(uvI.uv);   
+                                // AtestFun(UVdata);
+                                // AtestFun(uvI.uv);   
                         });
                 }
         }
@@ -164,12 +158,12 @@ $(document).ready(function () {
                 }
         }
 
-        function AtestFun(string)
-        {
-                let aString = string;
-                console.log(aString);
-                return aString;
-        }
+        // function AtestFun(string)
+        // {
+        //         let aString = string;
+        //         console.log(aString);
+        //         return aString;
+        // }
 
         $("#searchBtn").on("click", function () {
                   event.preventDefault();
