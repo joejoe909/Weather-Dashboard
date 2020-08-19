@@ -80,7 +80,7 @@ $(document).ready(function () {
                  let uv = $('<h4>' + 'UV index: '  + uvIndexObject.uv + ' ' + '<h4>');
                  uv.setBgColor;
                  console.log(uv);
-                 uv.attr('class' , uv.bgText);
+                 uv.attr('class' , 'bg-danger text-light');
                 // console.log(uvTest);
                 $('#currentWeather').append(cityName);
                 $('#currentWeather').append(Temp);
@@ -219,20 +219,5 @@ let FiveDayObject = {
 
 let uvIndexObject = {
             'uv':'',
-        'bgText':'bg-primary',
-    'setBgColor':function(uv){
-                if(this.uv > 10)
-                {
-                   this.bgText = 'bg-danger';
-                       
-                }else if(this.uv > 5 && this.uv < 10){
-                    this.bgText = 'bg-warning';
-                            
-                }else{
-                    this.bgText = 'bg-primary';
-                        
-                }
-
-        },
 };
 
