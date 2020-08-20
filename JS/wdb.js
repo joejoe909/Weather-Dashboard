@@ -18,7 +18,7 @@ $(document).ready(function () {
                 let BGColor = setUVbgColor(uvI.uv);
                 let uv = $('<h4>');
                 uv.attr('class', BGColor);
-                uv.text("UV Index: " + vI.uv);
+                uv.text("UV Index: " + uvI.uv);
                 // console.log(uvTest);
                 $('#currentWeather').append(cityName);
                 $('#currentWeather').append(Temp);
