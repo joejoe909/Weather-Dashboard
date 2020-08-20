@@ -9,7 +9,7 @@ $(document).ready(function () {
                 let crHmdty = currentWeather.main.humidity;
                 let crWndSpd = currentWeather.wind.speed;
                 let icnCW = currentWeather.weather[0].icon;
-                let imgICW = $('<img src = http://openweathermap.org/img/wn/' + icnCW + '@2x.png' + '>');
+                let imgICW = $('<img src = https://openweathermap.org/img/wn/' + icnCW + '@2x.png' + '>');
                 let cityName = $('<h3>' + city + ' ' + time +  '</h3>');
                 cityName.append(imgICW); 
                 let Temp = $('<h4>' + 'Temperature: ' + parseInt(crTemp) + 'F°' + '</h4>'); 
@@ -74,7 +74,7 @@ $(document).ready(function () {
                         $('#Day' + d).append(h3Date);
                         var h3Temp = $('<h6>' + FiveDayObject.temp[n] + 'F°' + '<h6>');
                         $('#Day' + d).append(h3Temp);
-                        var icon = $('<img src = http://openweathermap.org/img/wn/' + fiveDayObj.icon[n] + '@2x.png' + '>');
+                        var icon = $('<img src = https://openweathermap.org/img/wn/' + fiveDayObj.icon[n] + '@2x.png' + '>');
                         $('#Day' + d).append(icon);
                         var h3Humidity = $('<h6>' + FiveDayObject.hum[n] + '%' + '<h6>');
                         $('#Day' + d).append(h3Humidity);
@@ -111,6 +111,7 @@ $(document).ready(function () {
                                 let resCity = response;
                                 localStorage.setItem("lastCity", JSON.stringify(resCity)); // this is used so we can test without having to query the server
                                 renderCurrentWeather(response);
+                                
                         });
                 }
         }
