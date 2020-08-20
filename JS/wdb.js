@@ -110,7 +110,7 @@ $(document).ready(function () {
                                 console.log(response);
                                 let resCity = response;
                                 localStorage.setItem("lastCity", JSON.stringify(resCity)); // this is used so we can test without having to query the server
-                                getUVindex(response.city.coord.lat, response.city.coord.lon);
+                                getUVindex(response.city.coord.lat, response.city.coord.lon); 
                                 renderCurrentWeather(response);
                                 
                         });
@@ -134,6 +134,7 @@ $(document).ready(function () {
                                // console.log(response);
                                 let UVdata = JSON.stringify(response.value);
                                 localStorage.setItem("lastUV", JSON.stringify(UVdata)); // this is used so we can test without having to query the server
+                                prepareUV(UVdata);
                                 prepareUV(UVdata);
                                 // AtestFun(UVdata);
                                 // AtestFun(uvI.uv);   
