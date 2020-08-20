@@ -118,7 +118,7 @@ $(document).ready(function () {
 
         function getUVindex(lat, lon) {   // We esentially do the same thing as above but for UV index.
                 let UVdata = [];
-                let apiCall = "http://api.openweathermap.org/data/2.5/uvi?" //?appid={appid}&lat={lat}&lon={lon}
+                let apiCall = "https://api.openweathermap.org/data/2.5/uvi?" //?appid={appid}&lat={lat}&lon={lon}
                 let la = "&lat=" + lat;
                 let lo = "&lon=" + lon;
                 let KK = 'appid=beec6cc5881d930f74eb86a67a7a1dae';
