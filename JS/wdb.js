@@ -84,16 +84,17 @@ $(document).ready(function () {
 
 
         function prefillCityList(){
-                addToCityList("Chicago");
-                addToCityList("New York");
-                addToCityList("Los Angeles");
-                addToCityList("San Francisco");
+            
                 addToCityList("San Jose");
                 addToCityList("Phoenix");
                 addToCityList("Green Valley");
                 addToCityList("Rio Rico");
                 addToCityList("Tucson");
                 addToCityList("Nogales");
+                addToCityList("Chicago");
+                addToCityList("New York");
+                addToCityList("Los Angeles");
+                addToCityList("San Francisco");
         }
 
 
@@ -213,7 +214,7 @@ $(document).ready(function () {
                 } else {
                         cityList = [];
                         prefillCityList();
-                        buildQueryURL('New York')
+                        buildQueryURL('New York');
                 }
         }        
 });
