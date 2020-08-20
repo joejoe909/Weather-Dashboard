@@ -15,9 +15,9 @@ $(document).ready(function () {
                 let Temp = $('<h4>' + 'Temperature: ' + parseInt(crTemp) + 'F°' + '</h4>'); 
                 let Hmdty = $('<h4>' + 'Humidity: ' + crHmdty + '%' + '</h4>'); 
                 let WndSpd = $('<h4>' + 'Wind Speed: ' + crWndSpd + ' MPH' + '</h4>'); 
-                let lat = ajxResponse.city.coord.lat;
-                let long = ajxResponse.city.coord.lon;
-                getUVindex(lat, long);  //Run a query for the UV index. //put uv index in uv variable
+                // let lat = ajxResponse.city.coord.lat;
+                // let long = ajxResponse.city.coord.lon;
+                // getUVindex(lat, long);  //Run a query for the UV index. //put uv index in uv variable
                 //toString(uvIndxObj);
                 let uv = $('<h4>' + 'UV index: '  + uvI.uv + ' ' + '<h4>');
                 uv.attr('class' , 'bg-danger text-light');
@@ -108,8 +108,10 @@ $(document).ready(function () {
                                 url: queryURL,
                                 method: "GET"
                         }).then(function (response) {
+                                console.log(response);
                                 let resCity = response;
                                 localStorage.setItem("lastCity", JSON.stringify(resCity)); // this is used so we can test without having to query the server
+                                getUVindex(response.city.coord.lat, response.city.coord.lon);
                                 renderCurrentWeather(response);
                                 
                         });
@@ -133,8 +135,7 @@ $(document).ready(function () {
                                // console.log(response);
                                 let UVdata = JSON.stringify(response.value);
                                 localStorage.setItem("lastUV", JSON.stringify(UVdata)); // this is used so we can test without having to query the server
-                                uvI = Object.create(uvIndexObject);
-                                uvI.uv = UVdata;
+                                prepareUV(UVdata);
                                 // AtestFun(UVdata);
                                 // AtestFun(uvI.uv);   
                         });
@@ -159,12 +160,12 @@ $(document).ready(function () {
                 }
         }
 
-        // function AtestFun(string)
-        // {
-        //         let aString = string;
-        //         console.log(aString);
-        //         return aString;
-        // }
+        function prepareUV(string)
+        {
+               let UVindex = string;
+               uvI.uv = UVindex
+
+        }
 
         $("#searchBtn").on("click", function () {
                   event.preventDefault();
@@ -208,11 +209,11 @@ $(document).ready(function () {
                                 if(city !== -1){ addToCityList(city) };
                                 lastCity = city;
                         }
-                        buildQueryURL(cityList[0]);
+                        buildQueryURL(lastCity);
                 } else {
                         cityList = [];
                         prefillCityList();
-                        buildQueryURL(tucson);
+                        buildQueryURL('New York')
                 }
         }        
 });
@@ -235,12 +236,11 @@ let uvIndexObject = {
             'uv':'',
 };
 
-let renderModule = {
-        'city':'',
-        'currentWeather':'',
-        'currentTemp':'',
-        'currentHumidity':'',
-        'currentWindSpeed':'',
-       
+// let renderModule = {
 
-}
+//         'city':'',
+//         'currentWeather':'',
+//         'currentTemp':'',
+//         'currentHumidity':'',
+//         'currentWindSpeed':'',
+// }
