@@ -15,12 +15,10 @@ $(document).ready(function () {
                 let Temp = $('<h4>' + 'Temperature: ' + parseInt(crTemp) + 'F°' + '</h4>'); 
                 let Hmdty = $('<h4>' + 'Humidity: ' + crHmdty + '%' + '</h4>'); 
                 let WndSpd = $('<h4>' + 'Wind Speed: ' + crWndSpd + ' MPH' + '</h4>'); 
-                // let lat = ajxResponse.city.coord.lat;
-                // let long = ajxResponse.city.coord.lon;
-                // getUVindex(lat, long);  //Run a query for the UV index. //put uv index in uv variable
-                //toString(uvIndxObj);
-                let uv = $('<h4>' + 'UV index: '  + uvI.uv + ' ' + '<h4>');
-                uv.attr('class' , 'bg-danger text-light');
+                let BGColor = setUVbgColor(uvI.uv);
+                let uv = $('<h4>');
+                uv.attr('class', BGColor);
+                uv.text(uvI.uv);
                 // console.log(uvTest);
                 $('#currentWeather').append(cityName);
                 $('#currentWeather').append(Temp);
@@ -165,6 +163,27 @@ $(document).ready(function () {
         {
                let UVindex = string;
                uvI.uv = UVindex
+
+        }
+
+        function setUVbgColor(uvIndexString)
+        {      
+                console.log(uvIndexString);
+                let value = parseInt(uvIndexString);
+                let moderate = 'bg-primary text-white';
+                let high = 'bg-warning text-white';
+                let veryHigh = 'bg-danger text-white';
+
+                if(value >= 8)
+                {
+                   return veryHigh;
+                }
+                else if(value <8 && value > 5)
+                {
+                        return high;
+                }else{
+                        return moderate;
+                }
 
         }
 
