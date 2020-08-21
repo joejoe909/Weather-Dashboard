@@ -2,6 +2,7 @@ $(document).ready(function () {
 
         function renderCurrentWeather(ajxResponse)
         {       $("#currentWeather").html("");  //clear the card.
+                $(".uvIndex").html('');
                 // console.log(ajxResponse);                       
                 let city = ajxResponse.city.name;
                 let currentWeather = ajxResponse.list[0];                 //get temp humidity windspeed and uv index
@@ -9,23 +10,24 @@ $(document).ready(function () {
                 let crHmdty = currentWeather.main.humidity;
                 let crWndSpd = currentWeather.wind.speed;
                 let icnCW = currentWeather.weather[0].icon;
-                let imgICW = $('<img src = https://openweathermap.org/img/wn/' + icnCW + '@2x.png' + '>');
+                let imgICW = $('<img>');
+                imgICW.attr('src','https://openweathermap.org/img/wn/' + icnCW + '@2x.png');
                 let cityName = $('<h3>' + city + ' ' + time +  '</h3>');
                 cityName.append(imgICW); 
                 let Temp = $('<h4>' + 'Temperature: ' + parseInt(crTemp) + 'F°' + '</h4>'); 
                 let Hmdty = $('<h4>' + 'Humidity: ' + crHmdty + '%' + '</h4>'); 
-                let WndSpd = $('<h4>' + 'Wind Speed: ' + crWndSpd + ' MPH' + '</h4>'); 
+                let WndSpd = $('<h4>' + 'Wind Speed: ' + crWndSpd + ' MPH' + '</h4>');     
                 let BGColor = setUVbgColor(uvI.uv);
                 let uv = $('<h4>');
                 uv.attr('class', BGColor);
                 uv.text("UV Index: " + uvI.uv);
+
                 // console.log(uvTest);
                 $('#currentWeather').append(cityName);
                 $('#currentWeather').append(Temp);
                 $('#currentWeather').append(Hmdty);
                 $('#currentWeather').append(WndSpd);
-                $('#currentWeather').append(uv);
-                addToCityList(city);
+                $('.uvIndex').append(uv);
                  //getuv
                  //set 5 day forcast
                 let day1 = ajxResponse.list[1];
@@ -34,6 +36,8 @@ $(document).ready(function () {
                 let day4 = ajxResponse.list[4];
                 let day5 = ajxResponse.list[5];
                 buildFiveDayForecast(ajxResponse.list);     
+                addToCityList(city);      
+              
         }
 
         function buildFiveDayForecast(jsnArray) {
@@ -110,12 +114,21 @@ $(document).ready(function () {
                                 console.log(response);
                                 let resCity = response;
                                 localStorage.setItem("lastCity", JSON.stringify(resCity)); // this is used so we can test without having to query the server
-                                getUVindex(response.city.coord.lat, response.city.coord.lon); 
+                                mLat = response.city.coord.lat;
+                                mLon = response.city.coord.lon;
+                                getUVindex(mLat,mLon); 
                                 renderCurrentWeather(response);
                                 
                         });
                 }
+
+               
         }
+
+        // $(document).ajaxStop(function () {
+        //         console.log("calling UV");
+        //         getUVindex(mLat, mLon);
+        // });
 
         function getUVindex(lat, lon) {   // We esentially do the same thing as above but for UV index.
                 let UVdata = [];
@@ -131,13 +144,12 @@ $(document).ready(function () {
                                 url: queryURL,
                                 method: "GET"
                         }).then(function (response) {
-                               // console.log(response);
+                                console.log(response);
                                 let UVdata = JSON.stringify(response.value);
                                 localStorage.setItem("lastUV", JSON.stringify(UVdata)); // this is used so we can test without having to query the server
                                 prepareUV(UVdata);
-                                prepareUV(UVdata);
-                                // AtestFun(UVdata);
-                                // AtestFun(uvI.uv);   
+                                
+  
                         });
                 }
         }
@@ -163,8 +175,7 @@ $(document).ready(function () {
         function prepareUV(string)
         {
                let UVindex = string;
-               uvI.uv = UVindex
-
+               uvI.uv = UVindex;
         }
 
         function setUVbgColor(uvIndexString)
@@ -219,6 +230,7 @@ $(document).ready(function () {
         let cityList = [];
         let cityStore = JSON.parse(localStorage.getItem("cityList"));
         let cityNm = '';
+        let mLat, mLon;
         if(!test)
         {
                 if (cityStore !== null) {
@@ -254,7 +266,7 @@ let FiveDayObject = {
 };
 
 let uvIndexObject = {
-            'uv':'',
+            'uv':''
 };
 
 // let renderModule = {
