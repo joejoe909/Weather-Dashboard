@@ -102,6 +102,7 @@ $(document).ready(function () {
 
         function buildQueryURL(cityString) {  //Here we build the queryURL and then send to renderCurrentWeather.
                 let apiCall = "https://api.openweathermap.org/data/2.5/forecast";
+                let key = "&appid=beec6cc5881d930f74eb86a67a7a1dae";
                 let cityName = "?q=" + cityString;
                 var queryURL = apiCall + cityName + key;
                 if (test) {
@@ -135,8 +136,8 @@ $(document).ready(function () {
                 let apiCall = "https://api.openweathermap.org/data/2.5/uvi?" //?appid={appid}&lat={lat}&lon={lon}
                 let la = "&lat=" + lat;
                 let lo = "&lon=" + lon;
-                let KK = 'appid=beec6cc5881d930f74eb86a67a7a1dae';
-                var queryURL = apiCall + KK + la + lo;
+                let key = 'appid=beec6cc5881d930f74eb86a67a7a1dae';
+                var queryURL = apiCall + key + la + lo;
                 if (test) {
                         renderUVIndex(lastUV);
                 } else {
@@ -216,7 +217,7 @@ $(document).ready(function () {
         });
        
         //Variable initializations.
-        let key = "&appid=beec6cc5881d930f74eb86a67a7a1dae";
+      
         let lastCity = JSON.parse(localStorage.getItem("lastCity")); //used for testing
         let lastUV = JSON.parse(localStorage.getItem("lastUV"));//" " " 
         let time = moment().format('LLL');
